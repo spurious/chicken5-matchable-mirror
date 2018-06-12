@@ -1,0 +1,7 @@
+((synopsis "Hygienic MATCH replacement")
+ (license "Public Domain")
+ (category lang-exts)
+ (author "Alex Shinn")
+ (test-dependencies test)
+ (components (extension matchable)))
+ 
