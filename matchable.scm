@@ -5,7 +5,7 @@
    match-let
    match-let*
    match-letrec)
-  (import scheme (chicken base))
+  (import scheme (chicken base) (chicken memory representation))
 
   ;; CHICKEN-specific glue
 
