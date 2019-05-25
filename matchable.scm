@@ -29,7 +29,7 @@
   ;; Returns #t if 'obj' is a record with name 'type', #f otherwise.
   (define-syntax is-a?
     (syntax-rules ()
-      ((_ obj type) (record-instance? obj (quote type)))))
+      ((_ obj type) (record-instance? obj type))))
 
   (include "match.scm")
 )

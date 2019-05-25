@@ -1,7 +1,6 @@
 #;(include "../matchable.scm")
 
-(import scheme (chicken base) (chicken memory representation)
-        matchable test)
+(import scheme (chicken base) matchable test)
 
 (test-begin "match")
 
@@ -102,15 +101,35 @@
           (match x (#(a (set! b) c) (b 0)))
           x)))
 
-#+(not alexpander)
 (test-group "records"
+  (module boxes (box make-box)
+    (import scheme (chicken base))
+    (define-record box value))
+
+  (import boxes)
+
   (define-record point x y)
   (define-record-type my-box (make-my-box x) box? (x get-my-box-x))
 
-  (test "record"
+  (test "toplevel record using raw name"
+        '(123 456)
+        (match (make-point 123 456) (($ 'point x y) (list x y))))
+  
+  (test "toplevel record using identifier"
         '(123 456)
         (match (make-point 123 456) (($ point x y) (list x y))))
 
+  (test-error "module-namespaced record using invalid raw name fails"
+              (match (make-box 123) (($ 'foo#box x) (list x))))
+
+  (test "module-namespaced record using raw name"
+        '(123)
+        (match (make-box 123) (($ 'boxes#box x) (list x))))
+
+  (test "module-namespaced record using identifier"
+        '(456)
+        (match (make-box 456) (($ box x) (list x))))
+  
   (test "record with different predicate name"
         'ok
         (match (make-my-box 'ok) (($ my-box x) x)))
@@ -122,7 +141,7 @@
           (else #f)))
 
   (test-error "record with @ pattern should fail"
-        (match (make-point 123 456) ((@ point (x a) (y b)) 'ok)))
+              (match (make-point 123 456) ((@ point (x a) (y b)) 'ok)))
 
 
   (test "record nested"
