@@ -109,7 +109,10 @@
   (import boxes)
 
   (define-record point x y)
-  (define-record-type my-box (make-my-box x) box? (x get-my-box-x))
+  (define-record-type my-box
+    (make-my-box x)
+    box?
+    (x get-my-box-x set-my-box-x!))
 
   (test "toplevel record using raw name"
         '(123 456)
@@ -157,7 +160,11 @@
         '(123 789)
         (let ((p (make-point 123 456)))
           (match p (($ point x (set! y)) (y 789)))
-          (list (point-x p) (point-y p)))))
+          (list (point-x p) (point-y p))))
+
+  (test-error "record setter with @ pattern should fail"
+              (match (make-my-box 123)
+                ((@ my-box (x (set! set-x))) (set-x 2)))))
 
 (test-group "tails"
   (test "single tail"
